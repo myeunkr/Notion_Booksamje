@@ -23,7 +23,7 @@ export function StartScreen({ hasProgress, onStart, onResume, onRestart }: Start
         <div className={styles.badge}>
           <img
             className={styles.badgeIcon}
-            src="/campus-leader-badge.webp"
+            src={`${import.meta.env.BASE_URL}campus-leader-badge.webp`}
             alt="부산대학교 노션 캠퍼스 리더 배지"
             width={36}
             height={36}
