@@ -44,7 +44,7 @@ export const TEMPLATE_LINKS: Record<TypeId, LinkConfig> = {
 export const GUESTBOOK_LINK: LinkConfig = {
   key: 'guestbook',
   label: '방명록',
-  url: null,
+  url: 'https://campusleaders.notion.site/a69619039cb346aab60a7db074bdc9a8?pvs=105',
 }
 
 export const LINK_NOT_READY_LABEL = '(준비 중)'
