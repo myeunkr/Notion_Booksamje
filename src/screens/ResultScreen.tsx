@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { PrimaryButton } from '../components/PrimaryButton'
 import { ScoreBar } from '../components/ScoreBar'
 import { ConfirmDialog } from '../components/ConfirmDialog'
@@ -15,14 +15,7 @@ interface ResultScreenProps {
 }
 
 export function ResultScreen({ result, onRestart }: ResultScreenProps) {
-  const [toast, setToast] = useState<string | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
-
-  useEffect(() => {
-    if (!toast) return
-    const timer = window.setTimeout(() => setToast(null), 2400)
-    return () => window.clearTimeout(timer)
-  }, [toast])
 
   const primaryContent = RESULT_CONTENT[result.primary]
   const secondaryContent = RESULT_CONTENT[result.secondary]
@@ -31,34 +24,6 @@ export function ResultScreen({ result, onRestart }: ResultScreenProps) {
   function openLink(link: LinkConfig) {
     if (!isLinkReady(link)) return
     window.open(link.url as string, '_blank', 'noopener,noreferrer')
-  }
-
-  async function handleShare() {
-    const shareText = `[노션 약방] 나의 처방: ${primaryContent.resultName} — ${primaryContent.onelineRx}`
-    const nav = navigator as Navigator & {
-      share?: (data: { text: string }) => Promise<void>
-    }
-
-    if (nav.share) {
-      try {
-        await nav.share({ text: shareText })
-      } catch {
-        // 사용자가 공유를 취소한 경우 등은 별도 처리하지 않는다.
-      }
-      return
-    }
-
-    if (nav.clipboard?.writeText) {
-      try {
-        await nav.clipboard.writeText(shareText)
-        setToast('결과가 클립보드에 복사되었어요.')
-      } catch {
-        setToast('복사에 실패했어요. 다시 시도해 주세요.')
-      }
-      return
-    }
-
-    setToast('이 브라우저에서는 공유를 지원하지 않아요.')
   }
 
   return (
@@ -139,21 +104,10 @@ export function ResultScreen({ result, onRestart }: ResultScreenProps) {
         >
           방명록 작성하기{!isLinkReady(GUESTBOOK_LINK) && ` ${LINK_NOT_READY_LABEL}`}
         </PrimaryButton>
-        <div className={styles.minorActions}>
-          <PrimaryButton fullWidth variant="ghost" onClick={handleShare}>
-            결과 공유하기
-          </PrimaryButton>
-          <PrimaryButton fullWidth variant="ghost" onClick={() => setConfirmOpen(true)}>
-            다시 검사하기
-          </PrimaryButton>
-        </div>
+        <PrimaryButton fullWidth variant="ghost" onClick={() => setConfirmOpen(true)}>
+          다시 검사하기
+        </PrimaryButton>
       </div>
-
-      {toast ? (
-        <div className={styles.toast} role="status" aria-live="polite">
-          {toast}
-        </div>
-      ) : null}
 
       <ConfirmDialog
         open={confirmOpen}

@@ -1,5 +1,6 @@
 import { TYPE_PRIORITY_ORDER } from '../data/resultContent'
 import { RESULT_CONTENT } from '../data/resultContent'
+import { MAX_SCORE_PER_TYPE } from '../logic/scoring'
 import type { ScoreMap, TypeId } from '../types'
 import styles from './ScoreBar.module.css'
 
@@ -10,7 +11,7 @@ interface ScoreBarProps {
 }
 
 /** 결과 화면에서 유형별 점수를 막대로 보여준다. 점수를 숨기지 않는다. */
-export function ScoreBar({ scores, maxScore = 5, highlightTypes = [] }: ScoreBarProps) {
+export function ScoreBar({ scores, maxScore = MAX_SCORE_PER_TYPE, highlightTypes = [] }: ScoreBarProps) {
   return (
     <ul className={styles.list}>
       {TYPE_PRIORITY_ORDER.map((type) => {

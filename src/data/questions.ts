@@ -1,11 +1,16 @@
 import type { Question } from '../types'
 
 /**
- * 15개 비교 문항. 원래 문구를 사용자 검토 후 같은 의미·같은 유형 매핑을 유지하며
- * 더 짧고 직관적으로 다듬었다(선택 부담을 줄이기 위한 목적).
- * 6개 유형(schedule/study/collaboration/organization/habit/archive)의
- * 가능한 모든 조합(C(6,2)=15)이 정확히 한 번씩, 각 유형이 정확히 5회 등장한다.
- * (검증: tests/data-integrity.test.ts)
+ * 9개 비교 문항. 원래는 6개 유형의 모든 조합(15개, 유형별 5회)을 비교했지만,
+ * 문항 수가 많다는 피드백에 따라 설계를 축소했다.
+ *
+ * 축소 방식: 6개 유형을 두 그룹으로 나눠
+ *   그룹1(자기관리) = schedule·study·habit, 그룹2(정보·관계관리) = collaboration·organization·archive
+ * ① 각 그룹 내부의 3개 조합은 모두 비교하고
+ * ② 그룹 사이는 schedule↔collaboration, study↔organization, habit↔archive 짝으로만 비교해
+ * 총 9개 조합(3+3+3)을 선택했다. 그 결과 6개 유형 모두 정확히 3회씩 등장하는
+ * 균형은 그대로 유지된다(검증: tests/data-integrity.test.ts).
+ * 문항 문구는 사용자 검토를 거쳐 확정한 간결한 버전을 그대로 쓴다.
  */
 export const QUESTION_PROMPT =
   '둘 중 지금 나에게 더 불편하거나 먼저 해결하고 싶은 상황은?'
@@ -36,17 +41,6 @@ export const QUESTIONS: Question[] = [
   {
     id: 3,
     a: {
-      type: 'schedule',
-      text: '할 일은 알지만 마감 순서로 정리돼 있지 않다.',
-    },
-    b: {
-      type: 'organization',
-      text: '분명 적어뒀는데 어디 뒀는지 찾기 어렵다.',
-    },
-  },
-  {
-    id: 4,
-    a: {
       type: 'habit',
       text: '계획은 세우지만 매일 지켰는지 확인 안 해서 흐지부지된다.',
     },
@@ -56,29 +50,7 @@ export const QUESTIONS: Question[] = [
     },
   },
   {
-    id: 5,
-    a: {
-      type: 'schedule',
-      text: '수업과 활동 일정이 겹치면 조정하기 어렵다.',
-    },
-    b: {
-      type: 'archive',
-      text: '활동한 내용을 나중에 설명하려니 남겨둔 게 없다.',
-    },
-  },
-  {
-    id: 6,
-    a: {
-      type: 'study',
-      text: '과목별로 어디가 약한지 몰라 공부 순서를 못 정하겠다.',
-    },
-    b: {
-      type: 'collaboration',
-      text: '누가 뭘 맡았는지 안 보여서 협업 상황을 알기 어렵다.',
-    },
-  },
-  {
-    id: 7,
+    id: 4,
     a: {
       type: 'organization',
       text: '필기와 참고 자료가 따로 놀아서 같이 보기 불편하다.',
@@ -89,7 +61,7 @@ export const QUESTIONS: Question[] = [
     },
   },
   {
-    id: 8,
+    id: 5,
     a: {
       type: 'study',
       text: '시험까지 남은 기간에 맞게 공부량을 못 나누겠다.',
@@ -100,18 +72,7 @@ export const QUESTIONS: Question[] = [
     },
   },
   {
-    id: 9,
-    a: {
-      type: 'archive',
-      text: '활동에서 내가 한 일과 성과가 정리돼 있지 않다.',
-    },
-    b: {
-      type: 'study',
-      text: '공부한 것과 안 한 것 구분이 잘 안 된다.',
-    },
-  },
-  {
-    id: 10,
+    id: 6,
     a: {
       type: 'collaboration',
       text: '회의에서 정한 것과 할 일이 팀원들에게 명확히 안 전달된다.',
@@ -122,18 +83,7 @@ export const QUESTIONS: Question[] = [
     },
   },
   {
-    id: 11,
-    a: {
-      type: 'habit',
-      text: '혼자 세운 목표를 꾸준히 지켰는지 확인하기 어렵다.',
-    },
-    b: {
-      type: 'collaboration',
-      text: '역할·마감·파일을 한곳에서 팀원과 공유하기 어렵다.',
-    },
-  },
-  {
-    id: 12,
+    id: 7,
     a: {
       type: 'collaboration',
       text: '팀플 진행 중 서로 업무 상태를 확인하기 어렵다.',
@@ -144,18 +94,7 @@ export const QUESTIONS: Question[] = [
     },
   },
   {
-    id: 13,
-    a: {
-      type: 'organization',
-      text: '자료를 저장해도 분류 기준이 오락가락해서 다시 못 찾는다.',
-    },
-    b: {
-      type: 'habit',
-      text: '며칠 못 지키면 계획을 아예 포기하게 된다.',
-    },
-  },
-  {
-    id: 14,
+    id: 8,
     a: {
       type: 'archive',
       text: '지원서·포트폴리오 쓸 때 예전 활동 자료를 다시 모아야 한다.',
@@ -166,7 +105,7 @@ export const QUESTIONS: Question[] = [
     },
   },
   {
-    id: 15,
+    id: 9,
     a: {
       type: 'habit',
       text: '목표를 정해도 얼마나 지켰는지 눈으로 확인이 안 된다.',

@@ -3,36 +3,43 @@ import { QUESTIONS } from '../src/data/questions'
 import { TYPE_PRIORITY_ORDER } from '../src/data/resultContent'
 import {
   calculateScores,
+  createEmptyScores,
   getTopTypes,
   isAllAnswered,
+  MAX_SCORE_PER_TYPE,
   needsTieBreak,
   resolveFromAnswers,
   resolveResult,
 } from '../src/logic/scoring'
 import type { ScoreMap, TypeId } from '../src/types'
 
-/** 특정 유형이 나오는 문항은 그 유형을, 나머지는 a쪽을 선택하는 답변 배열을 만든다. */
+/**
+ * 특정 유형이 나오는 문항은 그 유형을 선택하고, 나머지 문항은 그때까지 점수가 더 낮은
+ * 쪽을 선택해(균형 배분) 어느 한 유형이 몰아서 preferredType과 동점이 되지 않게 만든다.
+ * 9문항 설계는 모든 조합을 비교하지 않으므로(유형마다 3문항만 등장), 단순히 한쪽만
+ * 계속 고르면 다른 유형이 preferredType과 점수가 같아질 수 있어 이 균형 배분이 필요하다.
+ */
 function buildAnswersPreferring(preferredType: TypeId): (TypeId | null)[] {
+  const running = createEmptyScores()
   return QUESTIONS.map((question) => {
     if (question.a.type === preferredType || question.b.type === preferredType) {
+      running[preferredType] += 1
       return preferredType
     }
-    return question.a.type
+    const pick = running[question.a.type] <= running[question.b.type] ? question.a.type : question.b.type
+    running[pick] += 1
+    return pick
   })
 }
 
 describe('calculateScores / resolveFromAnswers', () => {
   // 테스트 케이스 1~6: 6개 유형이 각각 단독 1위가 되는 경우.
-  // buildAnswersPreferring(T)는 T가 포함된 5문항은 항상 T를 선택하고, 나머지 10문항(= T를
-  // 제외한 5개 유형끼리의 모든 조합)은 항상 a쪽을 선택한다. 이때 T는 항상 5점을 받고,
-  // 나머지 각 유형은 그 10문항 안에서 최대 4점(자신이 a쪽인 문항 수)까지만 받을 수 있으므로
-  // T는 어떤 유형을 고르든 항상 단독 1위가 된다.
   it.each(TYPE_PRIORITY_ORDER)('%s이 단독 1위인 경우 주 처방으로 계산된다', (type) => {
     const answers = buildAnswersPreferring(type)
     const scores = calculateScores(answers)
-    expect(scores[type]).toBe(5)
+    expect(scores[type]).toBe(MAX_SCORE_PER_TYPE)
     for (const other of TYPE_PRIORITY_ORDER) {
-      if (other !== type) expect(scores[other]).toBeLessThanOrEqual(4)
+      if (other !== type) expect(scores[other]).toBeLessThan(MAX_SCORE_PER_TYPE)
     }
 
     const result = resolveFromAnswers(answers, null)
@@ -65,7 +72,7 @@ describe('calculateScores / resolveFromAnswers', () => {
 
 describe('동점 처리', () => {
   it('여섯 유형이 모두 동점이면(실제 응답으로는 도달 불가하여 점수를 직접 주입) 동점 결정이 필요하다고 판단한다 (추가 가드 테스트)', () => {
-    // 15문항의 총점은 항상 15이고 6개 유형으로는 나누어떨어지지 않아(2.5점) 실제 응답으로는
+    // 9문항의 총점은 항상 9이고 6개 유형으로는 나누어떨어지지 않아(1.5점) 실제 응답으로는
     // 6개 유형이 모두 동점일 수 없다. SPEC.md §2-C에 따라 동점 처리 순수 함수에
     // 인위적인 점수 배열을 직접 주입해 로직만 검증한다.
     const evenScores: ScoreMap = {
@@ -91,12 +98,12 @@ describe('동점 처리', () => {
 
   it('두 유형이 공동 1위면 동점 결정 화면이 필요하고, 선택 후 나머지가 보조 처방이 된다 (테스트 케이스 7)', () => {
     const scores: ScoreMap = {
-      schedule: 4,
-      study: 4,
-      collaboration: 3,
+      schedule: 3,
+      study: 3,
+      collaboration: 2,
       organization: 2,
       habit: 1,
-      archive: 1,
+      archive: 0,
     }
 
     expect(getTopTypes(scores)).toEqual(['schedule', 'study'])
@@ -129,15 +136,15 @@ describe('동점 처리', () => {
   })
 
   it('1위는 단독이고 2위가 여러 유형으로 동점이면, 고정 우선순위로 보조 처방 하나를 결정한다 (테스트 케이스 9)', () => {
-    // schedule 단독 1위(5점), study/collaboration/organization이 2점으로 공동 2위.
+    // schedule 단독 1위(3점), study/collaboration/organization이 1점으로 공동 2위.
     // 1위 동점이 아니므로 동점 결정 화면 없이 바로 확정되어야 하고,
     // 보조 처방은 2위 동점 후보 중 TYPE_PRIORITY_ORDER상 가장 앞선 study가 되어야 한다.
     const scores: ScoreMap = {
-      schedule: 5,
-      study: 2,
-      collaboration: 2,
-      organization: 2,
-      habit: 1,
+      schedule: 3,
+      study: 1,
+      collaboration: 1,
+      organization: 1,
+      habit: 0,
       archive: 0,
     }
 
@@ -148,7 +155,7 @@ describe('동점 처리', () => {
     expect(resolved?.hadTie).toBe(false)
     expect(resolved?.primary).toBe('schedule')
     expect(resolved?.secondary).toBe('study')
-    // 1위-2위 점수차가 3점(>=2)이므로 강도 문구는 'clear'
+    // 1위-2위 점수차가 2점(>=2)이므로 강도 문구는 'clear'
     expect(resolved?.strength).toBe('clear')
   })
 

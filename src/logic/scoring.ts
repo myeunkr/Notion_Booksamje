@@ -9,6 +9,13 @@ import type { ResolvedResult, ScoreMap, TypeId } from '../types'
  * 정확한 최신 점수가 반영된다.
  */
 
+/**
+ * 유형 하나가 받을 수 있는 최대 점수. 문항 데이터가 "모든 유형이 같은 횟수만큼
+ * 등장하는" 균형 잡힌 구조라는 전제 위에서, 전체 문항 수와 유형 수로부터 계산한다
+ * (각 문항이 두 유형에 1점씩 기여하므로 유형당 평균 등장 횟수 = 문항 수 * 2 / 유형 수).
+ */
+export const MAX_SCORE_PER_TYPE = (QUESTIONS.length * 2) / TYPE_PRIORITY_ORDER.length
+
 export function createEmptyScores(): ScoreMap {
   return TYPE_PRIORITY_ORDER.reduce((acc, type) => {
     acc[type] = 0

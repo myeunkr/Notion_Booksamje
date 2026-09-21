@@ -4,6 +4,10 @@
 > 이 문서는 사용자가 전달한 전체 요구사항을 분석·검증하고, 구현 착수 전 확인이 필요한 항목을 정리한 것입니다.
 > 문항 문구 / 유형명 / 결과 문구는 원문 그대로 유지했습니다. 임의로 요약하거나 표현을 바꾸지 않았습니다.
 > §2의 4개 결정 사항은 사용자 확인을 거쳐 아래와 같이 확정되었습니다.
+>
+> **변경 이력**: 배포 후 "문항이 길다/많다"는 피드백에 따라 ① 15개 문항 문장을 더 짧고
+> 직관적인 구어체로 다듬고, ② 문항 수를 15개(모든 조합)에서 9개(균형 잡힌 부분집합)로
+> 줄였습니다. 아래 §1은 이 최종(9문항) 설계 기준으로 갱신되어 있습니다.
 
 ---
 
@@ -18,52 +22,53 @@
 
 ## 1. 요구사항 검증
 
-### 1-1. 15개 문항의 6개 유형 조합 완전성 검증
+### 1-0. 문항 수 축소 (15 → 9)
 
-C(6,2) = 15개 조합이 필요합니다. 실제 15개 문항의 유형 쌍을 정렬해 대조한 결과:
+원래는 6개 유형의 모든 조합(C(6,2)=15개)을 빠짐없이 비교했으나, "문항이 너무 길다"는
+피드백에 따라 9개로 줄였습니다. 임의로 6개를 뺀 것이 아니라, 아래 구조로 균형을 유지한
+채 축소했습니다.
 
-| # | 유형 A | 유형 B |
-|---|---|---|
-| 1 | schedule | study |
-| 2 | collaboration | schedule |
-| 3 | schedule | organization |
-| 4 | habit | schedule |
-| 5 | schedule | archive |
-| 6 | study | collaboration |
-| 7 | organization | study |
-| 8 | study | habit |
-| 9 | archive | study |
-| 10 | collaboration | organization |
-| 11 | habit | collaboration |
-| 12 | collaboration | archive |
-| 13 | organization | habit |
-| 14 | archive | organization |
-| 15 | habit | archive |
+- 그룹1(자기관리): schedule · study · habit
+- 그룹2(정보·관계관리): collaboration · organization · archive
+- ① 그룹 내부 조합은 모두 비교 (그룹당 3쌍 × 2그룹 = 6쌍)
+- ② 그룹 간에는 schedule↔collaboration, study↔organization, habit↔archive로 짝지어진 1쌍씩만 비교 (3쌍)
+- 총 6 + 3 = **9쌍**
 
-알파벳순 재정렬로 중복 여부 대조:
+이 방식의 핵심은 "그룹 내부는 완전 비교 + 그룹 간은 정확히 1:1 매칭"이라 **6개 유형이
+여전히 정확히 같은 횟수(3회)씩 등장**한다는 점입니다. 즉 문항 수는 줄었지만 특정 유형이
+더 자주/덜 등장해서 유불리가 생기는 일은 없습니다.
 
-```
-archive-collaboration(12), archive-habit(15), archive-organization(14), archive-schedule(5), archive-study(9),
-collaboration-habit(11), collaboration-organization(10), collaboration-schedule(2), collaboration-study(6),
-habit-organization(13), habit-schedule(4), habit-study(8),
-organization-schedule(3), organization-study(7),
-schedule-study(1)
-```
+### 1-1. 9개 문항의 조합 검증
 
-→ **15개 조합 모두 정확히 1회씩 존재, 중복/누락 없음 (PASS)**
+| # | 유형 A | 유형 B | 비고 |
+|---|---|---|---|
+| 1 | schedule | study | 그룹1 내부 |
+| 2 | collaboration | schedule | 그룹 간 짝 |
+| 3 | habit | schedule | 그룹1 내부 |
+| 4 | organization | study | 그룹 간 짝 |
+| 5 | study | habit | 그룹1 내부 |
+| 6 | collaboration | organization | 그룹2 내부 |
+| 7 | collaboration | archive | 그룹2 내부 |
+| 8 | archive | organization | 그룹2 내부 |
+| 9 | habit | archive | 그룹 간 짝 |
+
+→ **의도한 9개 조합이 중복 없이 정확히 1회씩 존재 (PASS, 검증: tests/data-integrity.test.ts)**
+
+제외된 6개 조합(그룹이 다르면서 짝이 아닌 조합): schedule↔organization, schedule↔archive,
+study↔collaboration, study↔archive, habit↔collaboration, habit↔organization.
 
 ### 1-2. 유형별 등장 횟수 검증
 
 | 유형 | 등장 문항 | 횟수 |
 |---|---|---|
-| schedule | 1, 2, 3, 4, 5 | 5 |
-| study | 1, 6, 7, 8, 9 | 5 |
-| collaboration | 2, 6, 10, 11, 12 | 5 |
-| organization | 3, 7, 10, 13, 14 | 5 |
-| habit | 4, 8, 11, 13, 15 | 5 |
-| archive | 5, 9, 12, 14, 15 | 5 |
+| schedule | 1, 2, 3 | 3 |
+| study | 1, 4, 5 | 3 |
+| collaboration | 2, 6, 7 | 3 |
+| organization | 4, 6, 8 | 3 |
+| habit | 3, 5, 9 | 3 |
+| archive | 7, 8, 9 | 3 |
 
-→ **6개 유형 모두 정확히 5회 등장 (PASS)**. 합계 30 = 15문항×2선택지 = 6유형×5회로 정합성도 확인.
+→ **6개 유형 모두 정확히 3회 등장 (PASS)**. 합계 18 = 9문항×2선택지 = 6유형×3회로 정합성도 확인.
 
 ### 1-3. 위/아래 위치 편향 관련 확인
 
@@ -84,7 +89,7 @@ schedule-study(1)
 동점 유형이 정확히 2개면 "두 가지 고민의 우선순위가 비슷해요.", 3개 이상이면 "고민들의 우선순위가 비슷해요."로 표시한다.
 
 **(C) 최소 테스트 케이스 2번("6개 유형 모두 동점") → 순수 함수에 인위적 점수 배열 직접 주입 방식 확정**
-실제 15문항 응답으로는 도달 불가능한 상태이므로, 동점 처리 로직(순수 함수)에 `{ schedule:2, study:2, ... }`처럼 모든 유형이 2점인 인위적 점수 배열을 직접 주입하여 동점 결정 로직이 올바르게 동작하는지 검증한다.
+실제 9문항 응답으로는 도달 불가능한 상태이므로(9는 6으로 나누어떨어지지 않음), 동점 처리 로직(순수 함수)에 `{ schedule:2, study:2, ... }`처럼 모든 유형이 2점인 인위적 점수 배열을 직접 주입하여 동점 결정 로직이 올바르게 동작하는지 검증한다.
 
 **(D) 임시 URL 처리 방식 → `{ url: null, ready: false }` 플래그 방식 확정**
 `links.ts`에서 각 링크를 `{ url: null, ready: false }` 형태로 관리한다. `ready:false`인 동안은 항상 "링크 준비 중" 안내만 표시하고 실제 이동은 하지 않는다. 이후 실제 URL이 채워지면 `ready:true`로 바꾸고 새 탭(`target="_blank" rel="noopener noreferrer"`)으로 안전하게 열리도록 구현한다.
@@ -106,8 +111,8 @@ schedule-study(1)
 ## 3. 점수 계산 & 동점 처리 로직 정리
 
 ### 3-1. 기본 원칙
-- 점수는 **저장하지 않고**, 저장된 15개 답변 배열로부터 **매번 순수 함수로 재계산**합니다.
-- 각 유형 점수 범위: 0~5점. 전체 합은 항상 15점(모든 문항에 답했을 때).
+- 점수는 **저장하지 않고**, 저장된 9개 답변 배열로부터 **매번 순수 함수로 재계산**합니다.
+- 각 유형 점수 범위: 0~3점(`MAX_SCORE_PER_TYPE`, 문항 수와 유형 수로부터 계산). 전체 합은 항상 9점(모든 문항에 답했을 때).
 
 ### 3-2. 처리 흐름
 
@@ -151,7 +156,7 @@ schedule-study(1)
 
 ### 4-1. 화면 목록
 1. **시작 화면 (Start)**
-2. **검사 화면 (Question)** — 15문항 공용 레이아웃
+2. **검사 화면 (Question)** — 9문항 공용 레이아웃
 3. **동점 결정 화면 (TieBreak)** — 공동 1위가 있을 때만 진입
 4. **결과 화면 (Result)**
 
@@ -167,7 +172,7 @@ schedule-study(1)
  └─ 저장된 진행 없음
       └─ "검사 시작" → [검사 화면: 1문항]
 
-[검사 화면] (1~15문항 공용)
+[검사 화면] (1~9문항 공용)
  ├─ 카드 선택 → 선택 상태 표시 → (~200ms, reduced-motion 시 즉시)
  │     ├─ 마지막 문항 아님 → 다음 문항으로 이동
  │     └─ 마지막 문항 → 점수 계산
@@ -178,7 +183,7 @@ schedule-study(1)
 
 [동점 결정 화면]
  ├─ 해결 목표 카드 선택 → [결과 화면]
- └─ "이전 화면으로" → [검사 화면: 15문항, 재선택 가능]
+ └─ "이전 화면으로" → [검사 화면: 9문항, 재선택 가능]
 
 [결과 화면]
  ├─ "처방 템플릿 열기" → ready 여부에 따라 새 탭 오픈 / "링크 준비 중" 안내
@@ -239,7 +244,7 @@ Notion_booksamje/
 │   ├── App.tsx                     # 화면 상태 머신(start/question/tie/result) 라우팅
 │   ├── types.ts                    # TypeId, Question, StoredState 등 공용 타입
 │   ├── data/
-│   │   ├── questions.ts            # 15문항 원문 데이터
+│   │   ├── questions.ts            # 9문항 데이터(원래 15개 중 균형 잡힌 부분집합)
 │   │   ├── resultContent.ts        # 6개 유형의 결과명/한줄처방/설명/템플릿명/동점화면 해결목표
 │   │   └── links.ts                # 템플릿 6개 + 방명록 URL 설정 (ready 플래그 포함)
 │   ├── logic/
@@ -266,7 +271,7 @@ Notion_booksamje/
 │   └── vite-env.d.ts               # Vite/CSS Modules 타입 참조
 └── tests/
     ├── scoring.test.ts             # 점수/동점 로직 테스트
-    ├── data-integrity.test.ts      # 15개 조합 완전성 + 유형별 5회 등장 테스트
+    ├── data-integrity.test.ts      # 9개 조합 완전성 + 유형별 3회 등장 테스트
     └── storage.test.ts             # 손상 데이터 폴백 + 재시작 초기화 테스트
 ```
 
@@ -279,15 +284,15 @@ Notion_booksamje/
 | # | 사례 | 테스트 방식 |
 |---|---|---|
 | 1 | schedule 단독 1위 | 실제 answers 배열 구성 |
-| 2 | 6개 유형 동점 | **실제 답변으로는 불가능(수학적으로 15/6 비정수) → 동점 처리 함수에 인위적 점수 배열 직접 주입** (§2-(C) 확인 필요) |
+| 2 | 6개 유형 동점 | **실제 답변으로는 불가능(수학적으로 9/6 비정수) → 동점 처리 함수에 인위적 점수 배열 직접 주입** (§2-(C) 확인 필요) |
 | 3 | 2개 유형 공동 1위 | 실제 answers 배열 구성 |
 | 4 | 3개 이상 유형 공동 1위 | 실제 answers 배열 구성 |
 | 5 | 이전 문항 답변 변경 | answers 배열 특정 인덱스 교체 후 재계산 검증 |
 | 6 | 미완료 상태에서 결과 미계산 | answers에 null 포함 시 결과 계산 함수가 실행되지 않음을 검증 |
 | 7 | 손상된 localStorage | 깨진 JSON 문자열 주입 후 초기 상태로 안전 폴백 검증 |
 | 8 | 재시작 시 전체 초기화 | reset 액션 후 저장 데이터가 초기값과 동일한지 검증 |
-| 9 | 유형별 정확히 5회 등장 | questions.ts 정적 데이터 검증 (§1-2) |
-| 10 | 15개 조합 중복 없이 1회씩 | questions.ts 정적 데이터 검증 (§1-1) |
+| 9 | 유형별 정확히 3회 등장 | questions.ts 정적 데이터 검증 (§1-2) |
+| 10 | 9개 조합 중복 없이 1회씩 | questions.ts 정적 데이터 검증 (§1-1) |
 
 ---
 

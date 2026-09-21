@@ -38,7 +38,7 @@ export function StartScreen({ hasProgress, onStart, onResume, onRestart }: Start
           <span />
         </div>
         <p className={styles.tagline}>지금 나에게 먼저 필요한 노션 처방을 확인해 보세요.</p>
-        <p className={styles.meta}>15문항 · 약 1분</p>
+        <p className={styles.meta}>9문항 · 약 30초</p>
       </div>
 
       <div className={styles.bottom}>
