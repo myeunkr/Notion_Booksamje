@@ -62,6 +62,7 @@ export function QuestionScreen({
       </div>
 
       <p className={styles.prompt}>{QUESTION_PROMPT}</p>
+      <p className={styles.hint}>편하게, 첫 느낌대로 골라보세요.</p>
 
       <div className={styles.cards}>
         <SelectableCard
@@ -70,6 +71,11 @@ export function QuestionScreen({
           onSelect={() => handleSelect(topOption.type)}
           ariaLabel={`상황 1: ${topOption.text}`}
         />
+        <div className={styles.orDivider} aria-hidden="true">
+          <span />
+          <span className={styles.orMark}>또는</span>
+          <span />
+        </div>
         <SelectableCard
           text={bottomOption.text}
           selected={visualSelected === bottomOption.type}
