@@ -34,7 +34,7 @@ describe('localStorage 저장/복원', () => {
     // 그대로 재현하면 새로고침 후 복원 동작과 동일하다.
     const midProgress = createInitialState()
     midProgress.screen = 'question'
-    midProgress.currentIndex = 6
+    midProgress.currentIndex = 3
     midProgress.answers[0] = 'schedule'
     midProgress.answers[1] = 'collaboration'
     midProgress.answers[2] = 'organization'
@@ -44,7 +44,7 @@ describe('localStorage 저장/복원', () => {
     const reloaded = loadState()
 
     expect(reloaded.screen).toBe('question')
-    expect(reloaded.currentIndex).toBe(6)
+    expect(reloaded.currentIndex).toBe(3)
     expect(reloaded.answers[0]).toBe('schedule')
     expect(reloaded.answers[1]).toBe('collaboration')
     expect(reloaded.answers[2]).toBe('organization')
@@ -81,7 +81,7 @@ describe('localStorage 저장/복원', () => {
   it('검사 재시작 시 답변/점수/문항 배치 상태가 모두 초기화된다 (테스트 케이스 13)', () => {
     const inProgress = createInitialState()
     inProgress.screen = 'question'
-    inProgress.currentIndex = 7
+    inProgress.currentIndex = 4
     inProgress.answers[0] = 'schedule'
     saveState(inProgress)
     expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull()

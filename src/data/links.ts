@@ -1,7 +1,7 @@
 import type { LinkConfig, TypeId } from '../types'
 
 /**
- * 6개 추천 템플릿 + 방명록 링크를 한곳에서 관리한다.
+ * 4개 추천 템플릿 + 방명록 링크를 한곳에서 관리한다.
  *
  * 템플릿과 방명록 페이지가 아직 만들어지지 않은 동안은 `url: null`로 둔다.
  * 활성화 여부는 `url` 값 하나로만 결정되므로(logic/links.ts의 isLinkReady),
@@ -12,32 +12,22 @@ export const TEMPLATE_LINKS: Record<TypeId, LinkConfig> = {
   schedule: {
     key: 'schedule',
     label: '학사 일정·과제 마감 대시보드',
-    url: null,
-  },
-  study: {
-    key: 'study',
-    label: '시험 대비·복습 관리 플래너',
-    url: null,
+    url: 'https://app.notion.com/p/6f6cc72978134461a2715700a497c2cb?pvs=21',
   },
   collaboration: {
     key: 'collaboration',
     label: '팀플 프로젝트 관리 보드',
-    url: null,
+    url: 'https://app.notion.com/p/ea3d6e6f8e524b438a2d2b6a7885c71b?pvs=21',
   },
   organization: {
     key: 'organization',
     label: '강의 노트·자료 보관함',
-    url: null,
+    url: 'https://app.notion.com/p/a31a4dc74bee4e749fa0d556a885668f?pvs=21',
   },
   habit: {
     key: 'habit',
     label: '주간 목표·습관 트래커',
-    url: null,
-  },
-  archive: {
-    key: 'archive',
-    label: '대학생활 활동·프로젝트 기록',
-    url: null,
+    url: 'https://app.notion.com/p/a91a5a51bb0f458b8de0d118ebdf2bd9?pvs=21',
   },
 }
 

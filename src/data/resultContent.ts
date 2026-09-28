@@ -1,21 +1,20 @@
 import type { ResultContent, TypeId } from '../types'
 
 /**
- * 요구사항 "검사 유형" 섹션에 나열된 순서. 동점 처리 시 보조 처방을 하나로
- * 좁혀야 하는 경우(SPEC.md §2-A) 이 순서를 고정 우선순위로 사용한다.
+ * 요구사항 "검사 유형" 섹션에 나열된 순서(원래 6개 중 study/archive 제외).
+ * 동점 처리 시 보조 처방을 하나로 좁혀야 하는 경우(SPEC.md §2-A) 이 순서를
+ * 고정 우선순위로 사용한다.
  */
 export const TYPE_PRIORITY_ORDER: TypeId[] = [
   'schedule',
-  'study',
   'collaboration',
   'organization',
   'habit',
-  'archive',
 ]
 
 /**
- * 6개 유형의 결과 콘텐츠(결과명/한 줄 처방/설명/추천 템플릿/동점 화면 해결 목표).
- * 문구는 요구사항 원문 그대로이며 임의로 수정하지 않는다.
+ * 4개 유형의 결과 콘텐츠(결과명/한 줄 처방/설명/추천 템플릿/동점 화면 해결 목표).
+ * 원래 6개 유형 중 study는 schedule("일정 및 계획 관리")에 통합했고 archive는 삭제했다.
  */
 export const RESULT_CONTENT: Record<TypeId, ResultContent> = {
   schedule: {
@@ -27,16 +26,6 @@ export const RESULT_CONTENT: Record<TypeId, ResultContent> = {
     templateName: '학사 일정·과제 마감 대시보드',
     linkKey: 'schedule',
     tieGoal: '이번 주 해야 할 일과 마감 순서를 한눈에 확인하고 싶다.',
-  },
-  study: {
-    id: 'study',
-    resultName: '학습 루틴 처방',
-    onelineRx: '공부량보다 먼저, 언제 무엇을 복습할지 보이게 만드세요.',
-    description:
-      '공부해야 할 내용은 많지만 진도와 복습 주기가 정리되지 않아 시험 직전에 부담이 커질 수 있어요. 학습 과정이 보이는 루틴이 필요합니다.',
-    templateName: '시험 대비·복습 관리 플래너',
-    linkKey: 'study',
-    tieGoal: '과목별 공부 범위와 복습 시점을 한눈에 확인하고 싶다.',
   },
   collaboration: {
     id: 'collaboration',
@@ -67,16 +56,6 @@ export const RESULT_CONTENT: Record<TypeId, ResultContent> = {
     templateName: '주간 목표·습관 트래커',
     linkKey: 'habit',
     tieGoal: '작은 목표를 꾸준히 실천하고 진행 상황을 확인하고 싶다.',
-  },
-  archive: {
-    id: 'archive',
-    resultName: '경험 아카이빙 처방',
-    onelineRx: '경험이 끝난 뒤 기억하려 하지 말고, 진행하면서 남기세요.',
-    description:
-      '다양한 경험을 하고 있지만 과정과 성과가 정리되지 않아 나중에 활용하기 어려울 수 있어요. 활동이 끝나기 전에 핵심 내용을 축적하는 기록 공간이 필요합니다.',
-    templateName: '대학생활 활동·프로젝트 기록',
-    linkKey: 'archive',
-    tieGoal: '활동 과정과 성과를 나중에 활용할 수 있도록 기록하고 싶다.',
   },
 }
 

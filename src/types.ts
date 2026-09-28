@@ -1,10 +1,8 @@
-export type TypeId =
-  | 'schedule'
-  | 'study'
-  | 'collaboration'
-  | 'organization'
-  | 'habit'
-  | 'archive'
+/**
+ * 원래 6개 유형(schedule/study/collaboration/organization/habit/archive) 중
+ * study는 schedule("일정 및 계획 관리")에 통합하고, archive는 삭제해 4개로 재구성했다.
+ */
+export type TypeId = 'schedule' | 'collaboration' | 'organization' | 'habit'
 
 export interface QuestionOption {
   type: TypeId
