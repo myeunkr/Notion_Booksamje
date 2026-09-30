@@ -12,22 +12,22 @@ export const TEMPLATE_LINKS: Record<TypeId, LinkConfig> = {
   schedule: {
     key: 'schedule',
     label: '학사 일정·과제 마감 대시보드',
-    url: null, // 변경 가능성으로 비활성화. 이전 값: https://app.notion.com/p/6f6cc72978134461a2715700a497c2cb?pvs=21
+    url: 'https://campusleaders.notion.site/3ead5368c6db80ba8ee7e5c4d67e95d9?source=copy_link',
   },
   collaboration: {
     key: 'collaboration',
     label: '팀플 프로젝트 관리 보드',
-    url: null, // 변경 가능성으로 비활성화. 이전 값: https://app.notion.com/p/ea3d6e6f8e524b438a2d2b6a7885c71b?pvs=21
+    url: 'https://campusleaders.notion.site/3ead5368c6db803a874ccaf0783d3f6c?source=copy_link',
   },
   organization: {
     key: 'organization',
     label: '강의 노트·자료 보관함',
-    url: null, // 변경 가능성으로 비활성화. 이전 값: https://app.notion.com/p/a31a4dc74bee4e749fa0d556a885668f?pvs=21
+    url: 'https://campusleaders.notion.site/3ead5368c6db80acb049f36d03ee400d?source=copy_link',
   },
   habit: {
     key: 'habit',
     label: '주간 목표·습관 트래커',
-    url: null, // 변경 가능성으로 비활성화. 이전 값: https://app.notion.com/p/a91a5a51bb0f458b8de0d118ebdf2bd9?pvs=21
+    url: 'https://campusleaders.notion.site/3ead5368c6db80ad9971dcb1392fde4b?source=copy_link',
   },
 }
 
