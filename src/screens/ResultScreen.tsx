@@ -60,15 +60,15 @@ export function ResultScreen({ result, onRestart }: ResultScreenProps) {
               <LeafIcon className={styles.labelIcon} />추천 템플릿
             </p>
             <p className={styles.templateName}>{primaryContent.templateName}</p>
+            <p className={styles.presentNotice}>처방전을 노션 약사에게 보여주세요!</p>
             <PrimaryButton
               fullWidth
-              size="lg"
+              variant="secondary"
               disabled={!isLinkReady(templateLink)}
               onClick={() => openLink(templateLink)}
             >
               처방 템플릿 열기{!isLinkReady(templateLink) && ` ${LINK_NOT_READY_LABEL}`}
             </PrimaryButton>
-            <p className={styles.presentNotice}>처방전을 노션 약사에게 보여주세요!</p>
           </div>
         </div>
 
